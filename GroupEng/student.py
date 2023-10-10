@@ -50,8 +50,12 @@ class Student(object):
             if val in ['', '0']:
                 self.data[key] = None
             else:
-                self.data[key] = numberize(val)
-
+                if key == 'blacklist':
+                    b = str(val).split(", ")
+                    self.data[key] = [elem.strip() for elem in b]
+                elif key != self.identifier:
+                    self.data[key] = numberize(val)
+            
         self.group = None
         self.headers = list(headers)
         if group_number not in self.headers:

@@ -140,7 +140,7 @@ class Rule(object):
                                 flatten.difference(all_values))
 
 
-        if len(self.values) == 0:
+        if len(self.values) == 0 and not isinstance(self, BlackList):
             raise NoValidValues(self.name, attribute)
 
         self.all_values = all_values
@@ -192,6 +192,36 @@ class Rule(object):
     def __str__(self):
         return "<{0} {1} {2}>".format(self.name, self.attribute, self.values)
 
+
+class BlackList(Rule):
+    name = 'BlackList'
+
+    def _init(self, attribute, course, values='all', weight=None, **kwargs):
+        pass
+
+    def _check(self, students):
+        for student in students:
+            # Check if any student in the group is in another student's blacklist
+            if student.data["blacklist"] != None:
+                for other_student in students:
+                      if other_student != student and other_student.data[student.identifier] in student.data["blacklist"]:
+                        return False
+        return True
+
+    def _fix(self, student, groups, students):
+        # If a student is unhappy due to the blacklist rule, attempt to fix it
+        target_group = None
+        if student.data['blacklist'] != None:
+            for group in groups:
+                # find a group which none of the group's student is in blacklist
+                if student.group != group and not any(other.data[student.identifier] in student.data['blacklist'] for other in group.students):
+                    target_group = group
+                    break
+        if target_group:
+            swap(student, random.choice(target_group.students))
+            return True
+        return False
+    
 
 class Cluster(Rule):
     name = 'Cluster'
@@ -526,7 +556,7 @@ class RuleNotImplemented(Exception):
 your input deck?".format(self.rule)
 
 _all_rules = {}
-for rule in [Aggregate, Distribute, Cluster, Balance]:
+for rule in [Aggregate, Distribute, Cluster, Balance, BlackList]:
     _all_rules[rule.name.lower()] = rule
 
 def make_rule(input_spec, course):

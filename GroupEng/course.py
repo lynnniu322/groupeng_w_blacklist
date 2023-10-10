@@ -123,7 +123,10 @@ class Course(object):
         self.students += [make_phantom() for i in range(int(phantoms_needed))]
 
     def attr_values(self, attr):
-        return remove_none(set(s[attr] for s in self.students))
+        if attr == "blacklist":
+            return set([])
+        else:
+            return remove_none(set(s[attr] for s in self.students))
 
 def remove_none(s):
     try:
