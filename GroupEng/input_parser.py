@@ -48,8 +48,10 @@ def read_input(infile):
             line = line[1:]
             # read a rule
             rule = {}
-            rule['name'] = split_key(line)[0].lower()
-            rule['attribute'] = split_key(line)[1]
+            parts = split_key(line)
+            rule['name'] = parts[0].lower()
+            if len(parts)>1:
+                rule['attribute'] = parts[1]
 
             # read extra arguments
             while i+1 < len(lines) and lines[i+1][0] != '-':

@@ -4,6 +4,8 @@ student_identifier : ID
 
 group_size : 4+
 
+- blacklist : blacklist
+
 - cluster : Gender
   values : F
 

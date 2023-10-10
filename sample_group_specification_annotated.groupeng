@@ -22,6 +22,11 @@ group_size : 4+
 # both group_size and number_of_groups. If you do, your group_size will be ignored
 # number_of_groups : 14
 
+
+# Don't group the student with student IDs in his blacklist.
+# To use this rule, dataset must have a 'blacklist' column.
+- blacklist : blacklist
+
 # Don't isolate women
 - cluster : Gender
   values : M
